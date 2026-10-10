@@ -37,7 +37,10 @@
 
 ### Demo 视频
 
-> TODO：上传 1–3 分钟核心玩法视频后，在此放链接。建议内容：开店 → 收卡谈判 → 验真假 → 开包 → 出售 → 一局内置对战。
+[![观看预告片（2 分钟，1080p）](screenshots/03-seller-negotiation.png)](media/trailer-1080p.mp4)
+
+▶ [点击观看预告片（2 分 03 秒 · 1080p · 27 MB）](media/trailer-1080p.mp4)　内容：开店、人格选择、网上进货、牌桌对战、街区探索、钓鱼与渔具店。
+预告片由我的真实游玩录屏用 [`tools/make_trailer.py`](tools/make_trailer.py)（ffmpeg）自动剪辑生成。
 
 ## 我做了什么，AI 做了什么
 
