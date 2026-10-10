@@ -10,7 +10,7 @@ No music is bundled: pass --music only with a track you have the rights to use.
 """
 import argparse, os, subprocess, sys, tempfile
 
-FONT = "C\:/Windows/Fonts/msyh.ttc"   # Microsoft YaHei, covers CJK + Latin
+FONT = r"C\:/Windows/Fonts/msyh.ttc"   # Microsoft YaHei, covers CJK + Latin
 W, H, FPS = 1920, 1080, 60
 FADE = 0.35
 
@@ -35,7 +35,7 @@ END = ("碎裂时空", "github.com/lasersoldier/ShufflingRift-Showcase")
 
 
 def esc_file(path):
-    return path.replace("\\", "/").replace(":", "\:")
+    return path.replace("\\", "/").replace(":", chr(92) + ":")
 
 
 def main():
@@ -57,6 +57,8 @@ def main():
     for s, e, *_ in SEGMENTS:
         cmd += ["-ss", str(s), "-t", str(e - s), "-i", a.src]
     n = len(SEGMENTS)
+    if a.music:
+        cmd += ["-i", a.music]
     f, labels = [], []
     # title card
     t_zh, t_en, t_sub = TITLE
@@ -69,7 +71,7 @@ def main():
     labels.append("[title]")
     for i, (s, e, zh, en) in enumerate(SEGMENTS):
         d = e - s
-        alpha = f"if(lt(t\,{FADE})\,t/{FADE}\,if(gt(t\,{d - FADE})\,({d}-t)/{FADE}\,1))"
+        alpha = rf"if(lt(t\,{FADE})\,t/{FADE}\,if(gt(t\,{d - FADE})\,({d}-t)/{FADE}\,1))"
         f.append(
             f"[{i}:v]setpts=PTS-STARTPTS,fps={FPS},scale={W}:{H}:flags=lanczos,setsar=1,"
             f"drawtext=fontfile='{FONT}':textfile='{tf(f'z{i}.txt', zh)}':fontsize=54:fontcolor=white:alpha='{alpha}':"
@@ -92,7 +94,7 @@ def main():
     total = 3 + sum(e - s for s, e, *_ in SEGMENTS) + 4
     cmd += ["-filter_complex_script", script, "-map", "[outv]"]
     if a.music:
-        cmd += ["-i", a.music, "-map", f"{n}:a", "-af",
+        cmd += ["-map", f"{n}:a", "-af",
                 f"afade=t=in:d=1.5,afade=t=out:st={total - 3}:d=3", "-c:a", "aac", "-b:a", "192k", "-shortest"]
     cmd += ["-c:v", "libx264", "-crf", "18", "-preset", "medium", "-movflags", "+faststart", a.out]
     print("running ffmpeg, total ~%ds" % total, flush=True)
