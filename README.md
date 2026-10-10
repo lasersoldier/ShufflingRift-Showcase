@@ -37,9 +37,9 @@
 
 ### Demo 视频
 
-[![观看预告片（2 分钟，1080p）](screenshots/03-seller-negotiation.png)](media/trailer-1080p.mp4)
+![预告片精华（自动循环）](media/preview.gif)
 
-▶ [点击观看预告片（2 分 03 秒 · 1080p · 27 MB）](media/trailer-1080p.mp4)　内容：开店、人格选择、网上进货、牌桌对战、街区探索、钓鱼与渔具店。
+完整预告片（2 分 03 秒 · 1080p · 27 MB，带配乐）：[点此下载 / 观看 `trailer-1080p.mp4`](media/trailer-1080p.mp4)。在 GitHub 页面点开后选择 *Download raw file* 即可用本地播放器播放。
 预告片由我的真实游玩录屏用 [`tools/make_trailer.py`](tools/make_trailer.py)（ffmpeg）自动剪辑生成。
 
 ## 我做了什么，AI 做了什么
