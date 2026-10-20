@@ -1,4 +1,4 @@
-# ShufflingRift — *Shattered Reality* (碎裂时空) — Portfolio Showcase
+# ShufflingRift — *Shattered Reality*  — Portfolio Showcase
 
 **English** · [简体中文](README.zh-CN.md)
 
