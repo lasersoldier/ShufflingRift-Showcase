@@ -42,7 +42,7 @@ A first-person trading-card-shop simulation built in Unity 6 (URP, C#). You buy 
 ![Trailer highlights (looping)](media/preview.gif)
 
 Full trailer (2 min 03 s · 1080p · 27 MB, with music): [`media/trailer-1080p.mp4`](media/trailer-1080p.mp4). GitHub does not play repo videos inline — open it and choose *Download raw file*.
-The trailer was cut automatically from my own gameplay recording with [`tools/make_trailer.py`](tools/make_trailer.py) (ffmpeg). The footage was recorded with the Chinese UI; the game itself is fully switchable to English.
+The trailer was cut automatically from my own gameplay recording with [`tools/make_trailer.py`](tools/make_trailer.py) (ffmpeg). The captions are English; the footage was recorded with the in-game Chinese UI, and the game itself can be switched to English in Settings.
 
 ## What I did, and what the AI did
 
