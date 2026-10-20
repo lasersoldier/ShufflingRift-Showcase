@@ -1,62 +1,65 @@
 # Architecture
 
-高层模块划分与数据流。路径为原项目中的目录（本仓库不含源码）。
+**English** · [简体中文](zh-CN/Architecture.md)
 
-## 分层
+High-level modules and data flow. Paths refer to the original project; this repository does not include the source.
+
+## Layers
 
 ```
 Assets/_Project/Scripts/
-├─ Domain/        纯 C# 规则与数据（卡牌资产、市场、人格、天赋、存档）
-├─ Tcg/           内置卡牌对战规则与对局引擎
-├─ App/           游戏流程、UI、场景装配、电脑各站点
-├─ Interaction/   第一人称交互（拾取、放置、验卡、柜台、背包）
-├─ Npc/           顾客、卖家、对战客的行为与动画
-├─ Player/        第一人称控制器
-└─ Localization/  中英文文本
+├─ Domain/        Plain C# rules and data (card assets, market, personas, talents, saves)
+├─ Tcg/           Built-in card game rules and match engine
+├─ App/           Game flow, UI, scene assembly, the computer's sites
+├─ Interaction/   First-person interaction (pick up, place, inspect, counter, backpack)
+├─ Npc/           Customers, sellers and duelists: behaviour and animation
+├─ Player/        First-person controller
+└─ Localization/  English / Chinese text catalogues and switching
 ```
 
-规模：约 375 个 C# 文件（含第三方），其中项目自有脚本约 270 个；测试约 108 个文件（EditMode 43，PlayMode 65）。
+Scale: about 375 C# files including third-party code, roughly 270 of them project-owned; about 108 test files (43 EditMode, 65 PlayMode).
 
-## 核心设计原则
+## Core principles
 
-1. **Domain 与表现分离。** `Domain` 不依赖场景对象，可直接用 EditMode 单元测试覆盖（价格、评级、谈判、人格、天赋网、存档）。
-2. **一张卡 = 一个实例。** 价格、品相、真假、所有权、位置都挂在同一个卡实例上；上架、放入牌组、出售只是改变它的位置/所有权，而不是复制数据。
-3. **隐藏信息由系统遮蔽。** 真假、真实评级、个人口碑对玩家不可直接读取，只能通过放大镜（区间）、紫外灯（按档次）、行情电脑等“证据”间接获得。
-4. **数据驱动。** 卡牌集、天赋节点、商品、NPC 人格等定义放在数据/配置里，规则代码不写死内容。
+1. **Domain is separate from presentation.** `Domain` does not depend on scene objects, so pricing, grading, negotiation, personas, the talent web and saves are covered by plain EditMode unit tests.
+2. **One card = one instance.** Price, condition, authenticity, ownership and location live on the same card instance. Putting it on display, into a deck or selling it only changes where it is or who owns it — it never copies data.
+3. **Hidden information is hidden by the system.** True authenticity, true grade and personal reputation cannot be read directly. The player only gets evidence: the loupe (a range that narrows as you look), UV light (depends on lamp tier), the market computer.
+4. **Data-driven.** Card sets, talent nodes, products and NPC traits are defined in data and configuration, not hard-coded in rules.
+5. **Every player-facing string is a localization key.** One catalogue per language, key for key, with English as the fallback. A PlayMode audit sweeps the live UI in English and fails if any Chinese is still on screen.
 
-## 主要数据流
+## Main data flow
 
 ```
-批发电脑 (MERIDIAN/PALLET/SHARD/LOT 47/STOCK)
-   │ 下单
+Wholesale computer (MERIDIAN / PALLET / SHARD / LOT 47 / STOCK)
+   │ order
    ▼
-延迟送货 → 后仓/货架 ──开包──► 卡牌实例 (Domain)
-                              │
-        顾客/卖家 (Npc) ◄─────┤ 估价、真假、评级
-              │ 对话/谈判      │
-              ▼               ▼
-        柜台交互 (Interaction) → 现金 / 口碑 / 库存 → 存档 (Saves)
+Delayed delivery → back room / shelves ──open pack──► card instances (Domain)
+                                                      │
+        Customers / sellers (Npc) ◄───────────────────┤ price, authenticity, grade
+              │ dialogue / negotiation                │
+              ▼                                       ▼
+        Counter interaction (Interaction) → cash / reputation / stock → save (Saves)
               │
-              └─► 对战桌 → Tcg 对局引擎 → 实体卡牌演出
+              └─► Play tables → Tcg match engine → physical card presentation
 ```
 
-## 子系统一览
+## Subsystems
 
-| 子系统 | 说明 |
+| Subsystem | Notes |
 |---|---|
-| 卡牌资产 | 唯一实例、品相阶梯、真假、评级、送评 |
-| 收卡谈判 | 卖家声明 + 证据戳说法；放大镜区间随观察收窄；紫外灯按设备档次；耐心与口碑 |
-| 市场经济 | 每日行情波动、批发渠道、金银废品价 |
-| 店铺运营 | 营业日循环、整洁度、垃圾、安保（失窃/追回）、升级与扩建 |
-| NPC | 顾客/卖家/对战客，九种性格标签（如 i 人、急性子、行家） |
-| 内置 TCG | 战线、能量、碎片等规则；在实体牌桌上演出，可举办 8/16 人赛事 |
-| 人格与天赋 | 九种人格，160 节点天赋网，无代价关键天赋 |
-| 街区 | 当铺（回收废品）、钓鱼与渔具店、后院河边 |
-| 存档 | 版本化存档，天赋重构时旧分配整体退回 |
-| 本地化 | 中文/英文双语 |
+| Card assets | Unique instances, condition ladder, authenticity, grading |
+| Buying negotiation | Seller claims plus evidence-based claim cards; loupe range narrows with inspection; UV by lamp tier; patience and reputation |
+| Market economy | Daily price movement, wholesale channels, precious-metal and scrap prices |
+| Shop operations | Day cycle, tidiness, litter, security (theft and recovery), upgrades and expansion |
+| NPCs | Customers, sellers and duelists with personality tags (e.g. introvert, impatient, expert) |
+| Built-in TCG | Lanes, energy, fragments; played on physical tables; 8- and 16-player tournaments |
+| Personas and talents | Nine personas, a 160-node talent web, cost-free keystone talents |
+| The street | A pawn shop (buys scrap), fishing and a tackle shop, the riverside behind the shop |
+| Saves | Versioned saves; when the talent web was restructured, old allocations were refunded wholesale |
+| Localization | English / Chinese |
 
-## 自动化验证
+## Automated verification
 
-- 无头 Unity 编译检查与批处理脚本（`Tools/Unity/Invoke-UnityBatch.ps1`）。
-- EditMode：规则与数值（245 项通过，截至 2026-10-02）。
-- PlayMode 证据测试：自动跑一整个赛事日、饮料服务、钓鱼对抗、电脑页点击、谈判流程等，并输出截图作为视觉证据。
+- Headless Unity compile checks and batch scripts (`Tools/Unity/Invoke-UnityBatch.ps1`).
+- EditMode: rules and numbers (259 tests passing as of 2026-10-21).
+- PlayMode evidence tests: run a whole tournament day, drinks service, the fishing fight, computer clicks, negotiation flows, and an English-UI audit; each saves screenshots as visual evidence.
